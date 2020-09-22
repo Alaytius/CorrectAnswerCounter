@@ -18,7 +18,9 @@ public class gui extends JFrame {
     private JLabel Current;
     private JSlider slider;
     private JLabel thresh;
-    private JSpinner thresholdspinner;
+    private JTextField textfield;
+    private JButton enter;
+
     public static double cscore = 0;
     public static int currentcorrect = 0;
     public static int needed = 0;
@@ -33,28 +35,30 @@ public class gui extends JFrame {
         Correct.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                threshold = (double)slider.getValue()/100;
-                thresh.setText("Threshold: " + threshold*100 + "%");
                 currentcorrect++;
                 total++;
                 cscore = ((double)currentcorrect/(double)total)*100;
                 needed = (int)Math.ceil((threshold*total - currentcorrect)/(1 - threshold));
                 if (needed < 0) needed = 0;
-                Current.setText("Current Percent: " + dec.format(cscore) + "% (" + currentcorrect + "/" + total + ")");
+                Current.setText("Current Percent: " + dec.format(cscore) + "%");
                 Needed.setText("Correct Answers Needed: " + needed);
+                String r = Integer.toString(currentcorrect);
+                String t = Integer.toString(total);
+                textfield.setText(r + "/" + t);
             }
         });
         Wrong.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                threshold = (double)slider.getValue()/100;
-                thresh.setText("Threshold: " + threshold*100 + "%");
                 total++;
                 cscore = ((double)currentcorrect/(double)total)*100;
                 needed = (int)Math.ceil((threshold*total - currentcorrect)/(1 - threshold));
                 if (needed < 0) needed = 0;
-                Current.setText("Current Percent: " + dec.format(cscore) + "% (" + currentcorrect + "/" + total + ")");
+                Current.setText("Current Percent: " + dec.format(cscore) + "%" );
                 Needed.setText("Correct Answers Needed: " + needed);
+                String r = Integer.toString(currentcorrect);
+                String t = Integer.toString(total);
+                textfield.setText(r + "/" + t);
             }
         });
         Reset.addActionListener(new ActionListener() {
@@ -64,8 +68,11 @@ public class gui extends JFrame {
                 currentcorrect = 0;
                 total = 0;
                 needed = 0;
-                Current.setText("Current Percent: " + cscore + "% (" + currentcorrect + "/" + total + ")");
+                Current.setText("Current Percent: " + cscore + "%");
                 Needed.setText("Correct Answers Needed: " + needed);
+                String r = Integer.toString(currentcorrect);
+                String t = Integer.toString(total);
+                textfield.setText(r + "/" + t);
             }
         });
         slider.addChangeListener(new ChangeListener() {
@@ -75,12 +82,30 @@ public class gui extends JFrame {
                 thresh.setText("Threshold: " + (int)(threshold*100) + "%");
             }
         });
+        enter.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String text = textfield.getText();
+                int a = text.indexOf("/");
+                String RightString = text.substring(0, a);
+                String TotalString = text.substring(a+1);
+                currentcorrect = Integer.parseInt(RightString);
+                total = Integer.parseInt(TotalString);
+                cscore = ((double)currentcorrect/(double)total)*100;
+                needed = (int)Math.ceil((threshold*total - currentcorrect)/(1 - threshold));
+                if (needed < 0) needed = 0;
+                Current.setText("Current Percent: " + dec.format(cscore) + "%" );
+                Needed.setText("Correct Answers Needed: " + needed);
+            }
+        });
     }
 
     public static void main(String[] args) {
         JFrame frame = new gui("Correct Answer Counter");
+        frame.setAlwaysOnTop(true);
         frame.setVisible(true);
     }
+
 
 
 }
